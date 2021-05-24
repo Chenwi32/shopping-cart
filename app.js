@@ -3,6 +3,8 @@ function cartApp() {
   const closeCart = document.querySelector('.close__cart');
   const productDOM = document.querySelector('.product__center');
   const cartDOM = document.querySelector('.cart__centent');
+  const item_Total = document.querySelector('.item__total');
+  const cart_Total = document.querySelector('.cart__total');
 
   let cart = [];
   let buttonDOM = [];
@@ -96,22 +98,81 @@ function cartApp() {
           element.target.disable = true;
 
           // This gets a product from the products gotten from the json file
-          const cartItem = Storage.getProducts(id);
+          const cartItem = {
+            /* we spread the value of the Storage.getProduct() into the cartItem and add a new property*/
+             ...Storage.getProducts(id), amount: 1 
+            };
           console.log(cartItem);
 
           // This adds the product to the cart(which is the empty cart array created above)
           cart = [ /* This is esentially saying, if there is anything is the cart, spread it here*/
                     ...cart,
-                   /* Then add the cart items inside too*/cartItem
+                   /* Then add the cart items inside too*/
+                   cartItem
                   ]
+
           // This stores the product to the local storage
           Storage.saveCart(cart)
-          // This sets item values
-          // This displays the items in the cart 
+
+          // This calls the setItemValues() method 
+          this.setItemValue(cart)
+
+          // This displays the items in the cart
+           this.addToCart(cartItem)
 
         });
       });
     }
+
+    // This sets the Item value 
+    setItemValue(cart){
+      let tempTotal = 0;
+      let itemTotal = 0;
+
+      // This calculates the amount of products and hence the the total
+      cart.map(item => {
+        tempTotal += item.price * item.amount;
+        itemTotal += item.amount;
+      });
+
+      item_Total.innerText = itemTotal;
+      cart_Total.innerText = parseInt(tempTotal.toFixed(2))
+    };
+
+    // This add the items to the cart section
+    addToCart({title, price, image, id}){
+      let div = document.createElement('div');
+      div.classList.add('cart__item')
+      div.innerHTML = `<img src=${image} alt="">
+      <div>
+        <h3>${title}</h3>
+        <h3 class="price">$${price}</h3>
+      </div>
+      <div>
+        <span data-id=${id}>
+          <svg>
+            <use xlink:href="./images/sprite.svg#icon-angle-up"></use>
+          </svg>
+        </span>
+        <p>3</p>
+        <span data-id=${id}>
+          <svg>
+            <use xlink:href="./images/sprite.svg#icon-angle-down"></use>
+          </svg>
+        </span>
+      </div>
+
+      <div>
+        <span class="remove__item">
+          <svg>
+            <use xlink:href="./images/sprite.svg#icon-trash"></use>
+          </svg>
+        </span>
+      </div>`;
+
+      cartDOM.appendChild(div);
+    }
+
   };
 
   // Storage
