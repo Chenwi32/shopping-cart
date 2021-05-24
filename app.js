@@ -173,7 +173,17 @@ function cartApp() {
       cartDOM.appendChild(div);
     }
 
+
   };
+  const cartPop = document.querySelector('.cart');
+
+  openCart.addEventListener('click', ()=> {
+    cartPop.classList.add('show')
+  })
+
+  closeCart.addEventListener('click', ()=>{
+    cartPop.classList.remove('show')
+  })
 
   // Storage
   class Storage {
@@ -210,8 +220,8 @@ function cartApp() {
       try {
 
         // This will go and fetch the data, assign the data to the recievedData variable
-        const results = await fetch('products.json');
-        const recievedData = await results.json();
+        const results =  await  fetch('products.json');
+        const recievedData =  await  results.json();
 
         // This will extract the items object which is in the fetched data
         const products = recievedData.items;
